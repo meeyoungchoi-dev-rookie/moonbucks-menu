@@ -3,12 +3,14 @@ const $ = (selector) => document.querySelector(selector);
 
 function App() {
 
+    // form 태그가 자동으로 전송되는걸 막는다
     document
       $("#espresso-menu-form")
       .addEventListener("submit", (e) => {
         e.preventDefault();
       });
       
+    // 메뉴 이름 입력받기  
     document
       $("#espresso-menu-name")
       .addEventListener("keypress", (e) => {
@@ -30,6 +32,12 @@ function App() {
            </button>
          </li>`;
         };
-        $("#espresso-menu-list").insertDjacentHTML("afterbegin", menuItemTemplate(espressoMenuName)); 
+        $("#espresso-menu-list").insertDjacentHTML(
+            "beforeend", 
+            menuItemTemplate(espressoMenuName)
+        );
+
+        const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
+        $(".menu-count").innerText = `총 ${menuCount} 개` 
       });
 }
