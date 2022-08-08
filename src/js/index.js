@@ -14,6 +14,16 @@ function App() {
     document
       $("#espresso-menu-name")
       .addEventListener("keypress", (e) => {
+        if (e.key !== "Enter") {
+            return;
+        }
+
+        // 값을 입력하지 않고 엔터를 누른경우 예외처리
+        if ($("#espresso-menu-name").value === "") {
+            alert("값을 입력해주세요.");
+            return;
+        }
+
         if (e.key === "Enter") {
            const espressoMenuName = $("#espresso-menu-name").value;    
            const menuItemTemplate = (espressoMenuName) => `<li class="menu-list-item d-flex items-center py-2">
@@ -38,6 +48,7 @@ function App() {
         );
 
         const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
-        $(".menu-count").innerText = `총 ${menuCount} 개` 
+        $(".menu-count").innerText = `총 ${menuCount} 개`;
+        $("#espresso-menu-name").value = ""; 
       });
 }
