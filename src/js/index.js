@@ -3,6 +3,17 @@ const $ = (selector) => document.querySelector(selector);
 
 function App() {
 
+    // 메뉴 수정
+    $("#espresson-menu-list").addEventListener("click", (e) => {
+      if (e.target.classList.contains("menu-edit-button")) {
+         const $menuName = e.target.closest("li").querySelector(".menu-name").innerText;    
+         const updatedMenuName = prompt("메뉴명을 수정하세요", $menuName.innerText);
+         $menuName.innerText = updatedMenuName;
+        }
+    });
+
+
+
     // form 태그가 자동으로 전송되는걸 막는다
     document
       $("#espresso-menu-form")
