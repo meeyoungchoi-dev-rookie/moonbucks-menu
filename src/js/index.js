@@ -71,13 +71,10 @@ function App() {
     $("#espresso-menu-form")
     .addEventListener("submit", (e) => {
       e.preventDefault();
-    });
+    }
+  );
     
-    
-
-  $("#espresso-menu-submiit-button").addEventListener("click", () => {
-    addMenuName();
-  })  
+  $("#espresso-menu-submiit-button").addEventListener("click", addMenuName);  
 
   // 메뉴 이름 입력받기  
   document
