@@ -86,3 +86,6 @@ function App() {
     addMenuName();
   });
 }
+
+
+App();
