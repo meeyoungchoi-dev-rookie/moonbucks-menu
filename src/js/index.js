@@ -28,6 +28,7 @@ function App() {
       this.menu = store.getLocalStorage();
     }
     render();
+    initEventListeners();
   };
 
   const render = () => {
@@ -62,8 +63,7 @@ function App() {
   }
 
   const updateMenuCount  = () => {
-    const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
-    $(".menu-count").innerText = `총 ${menuCount} 개`;
+    $(".menu-count").innerText = `총 ${this.menu[this.currentCategory].length} 개`;
   }
   
   const addMenuName = () => {
@@ -88,15 +88,14 @@ function App() {
     const updatedMenuName = prompt("메뉴명을 수정하세요", $menuName.innerText);
     this.menu[this.currentCategory][menuId].name = updatedMenuName;
     store.setLocalStorage(this.menu);
-    $menuName.innerText = updatedMenuName;
+    render();
   }
   
   const removeMenuName = (e) => {
     if (confirm("정말 삭제하시겠습니까?")) {
       const menuId = e.target.closest("li").dataset.menuId;
       this.menu.splice(menuId, 1);
-      e.target.closest("li").remove(); 
-      updateMenuCount();
+      render();
     }
   }
 
@@ -106,54 +105,58 @@ function App() {
     store.setLocalStorage(this.menu);
   }
 
-  $("#menu-list").addEventListener("click", (e) => {
-    if (e.target.classList.contains("menu-edit-button")) {
-      updateMenuName(e);
-      return;
-    }
+  const initEventListeners = () => {
+    $("#menu-list").addEventListener("click", (e) => {
+      if (e.target.classList.contains("menu-edit-button")) {
+        updateMenuName(e);
+        return;
+      }
 
-    // 메뉴 삭제
-    if (e.target.classList.contains("menu-remove-button")) {
-      removeMenuName(e);
-      return;
-    }
 
-    if (e.target.classList.contains("menu-sold-out-button")) {
-      soldOutMen(e);
-      return;
-    }
-  });
+      $("nav").addEventListener("click", (e) => {
+        const isCategoryButton = e.target.classList.contains("cafe-category-name")
+        if (isCategoryButton) {
+          const categoryName = e.target.dataset.categoryName;
+          this.currentCategory = categoryName;
+          $("#category-title").innerText = `${e.target.innerText} 메뉴관리`;
+          render();
+        }  
+      });
 
-  // form 태그가 자동으로 전송되는걸 막는다
-  document
-    $("#menu-form")
-    .addEventListener("submit", (e) => {
-      e.preventDefault();
-    }
-  );
+      // 메뉴 이름 입력받기  
+      $("#menu-name")
+      .addEventListener("keypress", (e) => {
+        if (e.key !== "Enter") {
+            return;
+        }
+        addMenuName();
+      });
+
+      // form 태그가 자동으로 전송되는걸 막는다
+      $("#menu-form")
+      .addEventListener("submit", (e) => {
+        e.preventDefault();
+      });
+
+      // 메뉴 삭제
+      if (e.target.classList.contains("menu-remove-button")) {
+        removeMenuName(e);
+        return;
+      }
+  
+      if (e.target.classList.contains("menu-sold-out-button")) {
+        soldOutMen(e);
+        return;
+      }
+    });
+  }
+
     
   $("#espresso-menu-submiit-button").addEventListener("click", addMenuName);  
 
-  // 메뉴 이름 입력받기  
-  document
-  $("#espresso-menu-name")
-  .addEventListener("keypress", (e) => {
-    if (e.key !== "Enter") {
-        return;
-    }
-    addMenuName();
-  });
+  
 
-
-  $("nav").addEventListener("click", (e) => {
-    const isCategoryButton = e.target.classList.contains("cafe-category-name")
-    if (isCategoryButton) {
-      const categoryName = e.target.dataset.categoryName;
-      this.currentCategory = categoryName;
-      $("#category-title").innerText = `${e.target.innerText} 메뉴관리`;
-      render();
-    }  
-  });
+ 
 
 }
 
