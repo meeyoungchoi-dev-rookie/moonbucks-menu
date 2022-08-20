@@ -12,16 +12,26 @@ const store = {
 
 function App() {
   // 상태는 변하는 데이터, 이 앱에서 변하는 것이 무엇인가 - 메뉴명 
-  this.menu = [];
+  this.menu = {
+    espresson: [],
+    frappuccino: [],
+    blended: [],
+    teavana: [],
+    desert: [],
+  };
+
+  this.currentCategory = "espresso";
+  
+
   this.init = () => {
-    if (store.getLocalStorage().length > 1) {
+    if (store.getLocalStorage()) {
       this.menu = store.getLocalStorage();
     }
     render();
   };
 
   const render = () => {
-    const template = this.menu.map((menuItem, index) => {
+    const template = this.menu[this.currentCategory].map((menuItem, index) => {
       return `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
                 <span class="w-100 pl-2 menu-name">${item.name}</span>
                 <button
@@ -45,8 +55,6 @@ function App() {
   updateMenuCount();
   }
 
-
-
   const updateMenuCount  = () => {
     const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
     $(".menu-count").innerText = `총 ${menuCount} 개`;
@@ -61,7 +69,7 @@ function App() {
 
     if (e.key === "Enter") {
       const espressoMenuName = $("#espresso-menu-name").value;   
-      this.menu.push({ name: espressoMenuName}); 
+      this.menu[this.currentCategory].push({ name: espressoMenuName}); 
       store.setLocalStorage(this.menu);
       render();
       $("#espresso-menu-name").value = ""; 
@@ -117,6 +125,13 @@ function App() {
     addMenuName();
   });
 }
+
+$("nav").addEventListener("click", (e) => {
+  const isCategoryButton = e.target.classList.contains("cafe-category-name")
+  if (isCategoryButton) {
+    const categoryName = e.target.dataset.categoryName
+  }
+})
 
 const app = new App();
 app.init();
