@@ -68,7 +68,7 @@ function App() {
     }
 
     if (e.key === "Enter") {
-      const espressoMenuName = $("#espresso-menu-name").value;   
+      const espressoMenuName = $("#menu-name").value;   
       this.menu[this.currentCategory].push({ name: espressoMenuName}); 
       store.setLocalStorage(this.menu);
       render();
@@ -80,7 +80,7 @@ function App() {
     const menuId = e.target.closest("li").dataset.menuId;
     const $menuName = e.target.closest("li").querySelector(".menu-name").innerText;    
     const updatedMenuName = prompt("메뉴명을 수정하세요", $menuName.innerText);
-    this.menu[menuId].name = updatedMenuName;
+    this.menu[this.currentCategory][menuId].name = updatedMenuName;
     store.setLocalStorage(this.menu);
     $menuName.innerText = updatedMenuName;
   }
@@ -94,7 +94,7 @@ function App() {
     }
   }
 
-  $("#espresson-menu-list").addEventListener("click", (e) => {
+  $("#menu-list").addEventListener("click", (e) => {
     if (e.target.classList.contains("menu-edit-button")) {
       updateMenuName(e);
     }
@@ -124,14 +124,21 @@ function App() {
     }
     addMenuName();
   });
+
+
+  $("nav").addEventListener("click", (e) => {
+    const isCategoryButton = e.target.classList.contains("cafe-category-name")
+    if (isCategoryButton) {
+      const categoryName = e.target.dataset.categoryName;
+      this.currentCategory = categoryName;
+      $("#category-title").innerText = `${e.target.innerText} 메뉴관리`;
+      render();
+    }  
+  });
+
 }
 
-$("nav").addEventListener("click", (e) => {
-  const isCategoryButton = e.target.classList.contains("cafe-category-name")
-  if (isCategoryButton) {
-    const categoryName = e.target.dataset.categoryName
-  }
-})
+
 
 const app = new App();
 app.init();
