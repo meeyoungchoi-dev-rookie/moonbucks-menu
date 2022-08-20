@@ -5,7 +5,7 @@ const store = {
     localStorage.setItem("menu", JSON.stringify(menu));
   },
   getLocalStorage() {
-    localStorage.getItem("menu");
+    return JSON.parse(localStorage.getItem("menu"));
   }
 }
 
@@ -13,6 +13,39 @@ const store = {
 function App() {
   // 상태는 변하는 데이터, 이 앱에서 변하는 것이 무엇인가 - 메뉴명 
   this.menu = [];
+  this.init = () => {
+    if (store.getLocalStorage().length > 1) {
+      this.menu = store.getLocalStorage();
+    }
+    render();
+  };
+
+  const render = () => {
+    const template = this.menu.map((menuItem, index) => {
+      return `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
+                <span class="w-100 pl-2 menu-name">${item.name}</span>
+                <button
+                  type="button"
+                  class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
+                >
+                  수정
+                </button>
+                <button
+                  type="button"
+                  class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
+                >
+                  삭제
+                </button>
+              </li>`;
+    })
+    .join("");
+
+    
+  $("#espresso-menu-list").innerHTML = template;
+  updateMenuCount();
+  }
+
+
 
   const updateMenuCount  = () => {
     const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
@@ -30,30 +63,9 @@ function App() {
       const espressoMenuName = $("#espresso-menu-name").value;   
       this.menu.push({ name: espressoMenuName}); 
       store.setLocalStorage(this.menu);
-      const template = this.menu.map((menuItem, index) => {
-        return `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
-                  <span class="w-100 pl-2 menu-name">${item.name}</span>
-                  <button
-                    type="button"
-                    class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
-                  >
-                    수정
-                  </button>
-                  <button
-                    type="button"
-                    class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
-                  >
-                    삭제
-                  </button>
-                </li>`;
-      })
-      .join("");
-
-      
-    $("#espresso-menu-list").innerHTML = template;
-    updateMenuCount();
-    $("#espresso-menu-name").value = ""; 
-    };
+      render();
+      $("#espresso-menu-name").value = ""; 
+      };
   }
 
   const updateMenuName = (e) => {
@@ -106,4 +118,5 @@ function App() {
   });
 }
 
-App();
+const app = new App();
+app.init();
