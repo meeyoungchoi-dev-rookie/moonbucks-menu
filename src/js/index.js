@@ -126,12 +126,13 @@ function App() {
       }
 
 
-      $("nav").addEventListener("click", (e) => {
+      $("nav").addEventListener("click", async (e) => {
         const isCategoryButton = e.target.classList.contains("cafe-category-name")
         if (isCategoryButton) {
           const categoryName = e.target.dataset.categoryName;
           this.currentCategory = categoryName;
           $("#category-title").innerText = `${e.target.innerText} 메뉴관리`;
+          await MenuAPi.getAllMenuByCategory(this.currentCategory);
           render();
         }  
       });
