@@ -23,6 +23,19 @@ const MenuAPi = {
         console.error("에러가 발생했습니다.");
     }
   },
+
+  async updateMenu(category, name, menuId) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name }), 
+    });
+    if (!response.ok) {
+        console.error("에러가 발생했습니다.");
+    }
+  },
 }
 
 function App() {
@@ -46,7 +59,7 @@ function App() {
 
   const render = () => {
     const template = this.menu[this.currentCategory].map((menuItem, index) => {
-      return `<li data-menu-id="${index}" class=" menu-list-item d-flex items-center py-2">
+      return `<li data-menu-id="${menuItem.id}" class=" menu-list-item d-flex items-center py-2">
                 <span class="w-100 pl-2 menu-name ${menuItem.soldOut ? "sold-out" : ""}">${item.name}</span>
                 <button
                   type="button"
@@ -95,12 +108,14 @@ function App() {
     };
   }
 
-  const updateMenuName = (e) => {
+  const updateMenuName = async (e) => {
     const menuId = e.target.closest("li").dataset.menuId;
     const $menuName = e.target.closest("li").querySelector(".menu-name").innerText;    
     const updatedMenuName = prompt("메뉴명을 수정하세요", $menuName.innerText);
-    this.menu[this.currentCategory][menuId].name = updatedMenuName;
-    store.setLocalStorage(this.menu);
+    await MenuAPi.updateMenu(this.currentCategory, updateMenuName, menuId);
+    this.menu[this.currentCategory] = await MenuAPi.getAllMenuByCategory(this.currentCategory);
+    //this.menu[this.currentCategory][menuId].name = updatedMenuName;
+    //store.setLocalStorage(this.menu);
     render();
   }
   
