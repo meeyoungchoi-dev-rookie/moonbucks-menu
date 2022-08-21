@@ -5,6 +5,13 @@ const $ = (selector) => document.querySelector(selector);
 
 const BASE_URL = "http://localhost:3000/api";
 
+const MenuAPi = {
+ async getAllMenuByCategory(category) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`)
+    return response.json();
+  }
+}
+
 function App() {
   // 상태는 변하는 데이터, 이 앱에서 변하는 것이 무엇인가 - 메뉴명 
   this.menu = {
@@ -18,10 +25,8 @@ function App() {
   this.currentCategory = "espresso";
   
 
-  this.init = () => {
-    if (store.getLocalStorage()) {
-      this.menu = store.getLocalStorage();
-    }
+  this.init = async () => {
+    this.menu[this.currentCategory] = MenuAPi.getAllMenuByCategory(this.currentCategory);
     render();
     initEventListeners();
   };
@@ -82,15 +87,10 @@ function App() {
         console.log(data);
       });
       
-      await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        this.menu[this.currentCategory] = data;
-        render();
-        $("#espresso-menu-name").value = ""; 
-      });
+
+      this.menu[this.currentCategory] = await MenuAPi.getAllMenuByCategory(this.currentCategory);
+      render();
+      $("#espresso-menu-name").value = ""; 
     };
   }
 
