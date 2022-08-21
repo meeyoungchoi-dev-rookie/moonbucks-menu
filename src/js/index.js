@@ -1,14 +1,9 @@
+import { $ } from "./utils/dom.js";
+import store from "./store/index.js";
+
 const $ = (selector) => document.querySelector(selector);
 
-const store = {
-  setLocalStorage(menu) {
-    localStorage.setItem("menu", JSON.stringify(menu));
-  },
-  getLocalStorage() {
-    return JSON.parse(localStorage.getItem("menu"));
-  }
-}
-
+const BASE_URL = "http://localhost:3000/api";
 
 function App() {
   // 상태는 변하는 데이터, 이 앱에서 변하는 것이 무엇인가 - 메뉴명 
@@ -66,7 +61,7 @@ function App() {
     $(".menu-count").innerText = `총 ${this.menu[this.currentCategory].length} 개`;
   }
   
-  const addMenuName = () => {
+  const addMenuName = async () => {
     // 값을 입력하지 않고 엔터를 누른경우 예외처리
     if ($("#espresso-menu-name").value === "") {
       alert("값을 입력해주세요.");
@@ -74,12 +69,29 @@ function App() {
     }
 
     if (e.key === "Enter") {
-      const espressoMenuName = $("#menu-name").value;   
-      this.menu[this.currentCategory].push({ name: espressoMenuName}); 
-      store.setLocalStorage(this.menu);
-      render();
-      $("#espresso-menu-name").value = ""; 
-      };
+      const espressoMenuName = $("#menu-name").value;
+      await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: menuName}),                         
+      }).then((response) => {
+        return response.json();
+      }).then(data => {
+        console.log(data);
+      });
+      
+      await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        this.menu[this.currentCategory] = data;
+        render();
+        $("#espresso-menu-name").value = ""; 
+      });
+    };
   }
 
   const updateMenuName = (e) => {
